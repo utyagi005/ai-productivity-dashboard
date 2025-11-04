@@ -1,32 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI Productivity Dashboard</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-<style>
-  :root{ --bg:#0e1116; --text:#e8eef9; --muted:#9fb1d1; --card:#121a28; --accent:#6aa6ff; --radius:14px; }
-  *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui; background:var(--bg); color:var(--text)}
-  .wrap{max-width:980px;margin:32px auto;padding:0 16px}
-  h1{margin:0 0 6px} .sub{color:var(--muted);margin:0 0 18px}
-  .grid{display:grid;grid-template-columns:1fr 1fr 1fr; gap:16px}
-  @media(max-width:980px){ .grid{grid-template-columns:1fr 1fr} }
-  @media(max-width:640px){ .grid{grid-template-columns:1fr} }
-  .card{background:linear-gradient(180deg,#192132,#0e1420); border:1px solid rgba(255,255,255,.08); border-radius:var(--radius); padding:16px; box-shadow:0 10px 30px rgba(0,0,0,.3)}
-  input,textarea,button{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:#0b1321;color:#cfe1ff}
-  button{background:#142138;border-color:#24324d;font-weight:700;cursor:pointer}
-  button:hover{outline:0 0 0 3px rgba(106,166,255,.25)}
-  ul{padding-left:18px} li{margin:6px 0}
-  .muted{color:var(--muted)}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Productivity Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#0e1116; --text:#e8eef9; --muted:#9fb1d1; --card:#121a28; --accent:#6aa6ff; --radius:14px; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial; background: var(--bg); color: var(--text); }
+    .wrap { max-width: 980px; margin: 32px auto; padding: 0 16px; }
+    h1 { margin: 0 0 6px; }
+    .sub { color: var(--muted); margin: 0 0 18px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    @media (max-width: 980px) { .grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+
+    .card {
+      background: linear-gradient(180deg, #192132, #0e1420);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.3);
+    }
+    input, textarea, button {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.1);
+      background: #0b1321;
+      color: #cfe1ff;
+      font-family: inherit;
+    }
+    button {
+      background: #142138;
+      border-color: #24324d;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button:hover { outline: 0 0 0 3px rgba(106,166,255,.25); }
+    ul { padding-left: 18px; margin: 0; }
+    li { margin: 6px 0; list-style: disc; }
+    .muted { color: var(--muted); }
+    .row { display:flex; gap:8px; align-items:center; }
+    .row > input { flex: 1; }
+  </style>
 </head>
 <body>
   <div class="wrap">
     <h1>AI Productivity Dashboard</h1>
-    <p class="sub">Notes, tasks, and a lightweight (local) summary generator. No server needed.</p>
+    <p class="sub">Notes, tasks, and a lightweight (local) summary generator — plus a working contact form (Formspree).</p>
 
     <div class="grid">
       <!-- Notes -->
@@ -39,9 +64,9 @@
 
       <!-- Tasks -->
       <div class="card">
-        <h3>To‑Do</h3>
-        <div style="display:flex;gap:8px;margin-bottom:8px">
-          <input id="task" placeholder="New task">
+        <h3>To-Do</h3>
+        <div class="row" style="margin-bottom:8px">
+          <input id="task" placeholder="New task" />
           <button id="addTask" style="width:auto">Add</button>
         </div>
         <ul id="taskList"></ul>
@@ -50,60 +75,132 @@
       <!-- Summary -->
       <div class="card">
         <h3>Daily Focus (Local AI)</h3>
-        <p class="muted">Generates a short summary from your notes + tasks using simple keyword heuristics.</p>
+        <p class="muted">Generates a short summary from your notes + tasks using simple keyword heuristics (no API).</p>
         <button id="summarize">Generate Summary</button>
         <pre id="summary" style="white-space:pre-wrap;margin-top:10px"></pre>
+      </div>
+
+      <!-- Contact Form (Formspree) -->
+      <div class="card" style="grid-column: 1 / -1">
+        <h3>Contact Me</h3>
+        <form id="contactForm" action="https://formspree.io/f/mgvpjgok" method="POST">
+          <!-- Simple honeypot to reduce spam -->
+          <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
+          <input type="hidden" name="_subject" value="New message from AI Productivity Dashboard" />
+          <!-- Redirect after submit -->
+          <input type="hidden" name="_next" value="https://utyagi005.github.io/ai-productivity-dashboard/thanks.html" />
+
+          <div class="row" style="margin-bottom:8px; gap:12px">
+            <input type="text"   name="name"     placeholder="Your name"  required />
+            <input type="email"  name="_replyto" placeholder="Your email" required />
+          </div>
+          <textarea name="message" rows="5" placeholder="Write your message..." required></textarea>
+          <button type="submit" style="margin-top:8px">Send Message</button>
+          <div id="formStatus" class="muted" role="status" aria-live="polite"></div>
+        </form>
+        <p class="muted" style="margin-top:6px">Powered by Formspree (no backend required).</p>
       </div>
     </div>
   </div>
 
-<script>
-  // Local persistence
-  const notesEl = document.getElementById('notes');
-  const saveNotesBtn = document.getElementById('saveNotes');
-  const notesStatus = document.getElementById('notesStatus');
-  notesEl.value = localStorage.getItem('ut_notes') || '';
-  saveNotesBtn.onclick = ()=>{
-    localStorage.setItem('ut_notes', notesEl.value);
-    notesStatus.textContent = 'Saved at ' + new Date().toLocaleTimeString();
-    setTimeout(()=>notesStatus.textContent='', 1500);
-  };
+  <script>
+    // ---------------------------
+    // Notes (LocalStorage)
+    // ---------------------------
+    const notesEl = document.getElementById('notes');
+    const saveNotesBtn = document.getElementById('saveNotes');
+    const notesStatus = document.getElementById('notesStatus');
 
-  // Tasks
-  const taskEl = document.getElementById('task');
-  const addTask = document.getElementById('addTask');
-  const list = document.getElementById('taskList');
-  let tasks = JSON.parse(localStorage.getItem('ut_tasks')||'[]');
-  function renderTasks(){
-    list.innerHTML = tasks.map((t,i)=>`<li>
-      <input type="checkbox" ${t.done?'checked':''} data-i="${i}"> ${t.text}
-      <button data-del="${i}" style="margin-left:8px">✕</button>
-    </li>`).join('');
-  }
-  addTask.onclick = ()=>{
-    if(!taskEl.value.trim()) return;
-    tasks.push({text:taskEl.value.trim(), done:false});
-    taskEl.value=''; localStorage.setItem('ut_tasks', JSON.stringify(tasks)); renderTasks();
-  };
-  list.onclick = e=>{
-    if(e.target.dataset.i){ tasks[e.target.dataset.i].done = e.target.checked; }
-    if(e.target.dataset.del){ tasks.splice(+e.target.dataset.del,1); }
-    localStorage.setItem('ut_tasks', JSON.stringify(tasks)); renderTasks();
-  };
-  renderTasks();
+    notesEl.value = localStorage.getItem('ut_notes') || '';
+    saveNotesBtn.onclick = () => {
+      localStorage.setItem('ut_notes', notesEl.value);
+      notesStatus.textContent = 'Saved at ' + new Date().toLocaleTimeString();
+      setTimeout(() => (notesStatus.textContent = ''), 1500);
+    };
 
-  // "AI" summary (heuristic)
-  function summarize(text, tasks){
-    const lines = text.toLowerCase().split(/\W+/).filter(Boolean);
-    const counts = {};
-    lines.forEach(w=>counts[w]=(counts[w]||0)+1);
-    const keywords = Object.entries(counts).filter(([w,c])=>w.length>3).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([w])=>w);
-    const pending = tasks.filter(t=>!t.done).slice(0,5).map(t=>'- ' + t.text).join('\n');
-    return `Top keywords: ${keywords.join(', ') || 'n/a'}\n\nToday's focus:\n${pending || '- Add a task to get started.'}`;
-  }
-  document.getElementById('summarize').onclick = ()=>{
-    document.getElementById('summary').textContent = summarize(notesEl.value, tasks);
-  };
-</script>
+    // ---------------------------
+    // Tasks (LocalStorage)
+    // ---------------------------
+    const taskEl = document.getElementById('task');
+    const addTask = document.getElementById('addTask');
+    const list = document.getElementById('taskList');
+    let tasks = JSON.parse(localStorage.getItem('ut_tasks') || '[]');
+
+    function renderTasks() {
+      list.innerHTML = tasks
+        .map(
+          (t, i) => `<li>
+            <input type="checkbox" ${t.done ? 'checked' : ''} data-i="${i}" />
+            ${t.text}
+            <button data-del="${i}" style="margin-left:8px">✕</button>
+          </li>`
+        )
+        .join('');
+    }
+
+    addTask.onclick = () => {
+      const txt = taskEl.value.trim();
+      if (!txt) return;
+      tasks.push({ text: txt, done: false });
+      taskEl.value = '';
+      localStorage.setItem('ut_tasks', JSON.stringify(tasks));
+      renderTasks();
+    };
+
+    list.onclick = (e) => {
+      if (e.target.dataset.i) {
+        tasks[e.target.dataset.i].done = e.target.checked;
+      }
+      if (e.target.dataset.del) {
+        tasks.splice(+e.target.dataset.del, 1);
+      }
+      localStorage.setItem('ut_tasks', JSON.stringify(tasks));
+      renderTasks();
+    };
+
+    renderTasks();
+
+    // ---------------------------
+    // "AI" heuristic summary
+    // ---------------------------
+    function summarize(text, tasks) {
+      const words = text.toLowerCase().split(/\W+/).filter(Boolean);
+      const counts = {};
+      for (const w of words) {
+        if (w.length <= 3) continue;
+        counts[w] = (counts[w] || 0) + 1;
+      }
+      const keywords = Object.entries(counts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(([w]) => w);
+
+      const pending = tasks
+        .filter((t) => !t.done)
+        .slice(0, 5)
+        .map((t) => '- ' + t.text)
+        .join('\n');
+
+      return `Top keywords: ${keywords.join(', ') || 'n/a'}\n\nToday's focus:\n${
+        pending || '- Add a task to get started.'
+      }`;
+    }
+
+    document.getElementById('summarize').onclick = () => {
+      document.getElementById('summary').textContent = summarize(notesEl.value, tasks);
+    };
+
+    // ---------------------------
+    // Formspree (progress message)
+    // ---------------------------
+    const contactForm = document.getElementById('contactForm');
+    const formStatus = document.getElementById('formStatus');
+
+    contactForm.addEventListener('submit', () => {
+      formStatus.textContent = 'Sending...';
+      // Formspree handles the POST and redirect to thanks.html via _next.
+      setTimeout(() => (formStatus.textContent = 'Message sent (watch your email & Formspree inbox).'), 1500);
+    });
+  </script>
 </body>
 </html>
